@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: saas-web-app
+  namespace: saas-app
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-name: "saas-web-app-lb"
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthz"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "5000"
+spec:
+  type: LoadBalancer
+  selector:
+    app: saas-web-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000
