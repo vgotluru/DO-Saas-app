@@ -1,0 +1,25 @@
+name: Build and Push to DigitalOcean Registry
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install DigitalOcean doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Log in to DigitalOcean Container Registry
+      run: doctl registry login --expiry-seconds 1200
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/saas-web-app:v1 ./saas-app
+        docker push registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/saas-web-app:v1
